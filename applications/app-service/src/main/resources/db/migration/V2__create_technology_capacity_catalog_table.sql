@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS technology_capacity_catalogs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    capacity_catalog_id BIGINT NOT NULL,
+    external_id BIGINT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (capacity_catalog_id) REFERENCES capacity_catalogs(id) ON DELETE CASCADE
+);
