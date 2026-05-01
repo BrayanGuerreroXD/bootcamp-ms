@@ -45,7 +45,7 @@ class DeleteBootcampUseCaseTest {
 
     @Test
     void deleteBootcamp_WhenAdminUser_ShouldDeleteSuccessfully() {
-        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").isAdmin(true).build();
+        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").name("Admin").isAdmin(true).build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(adminUser));
         when(bootcampCapacityRepository.findCapacityIdsUsedOnlyByBootcamp(1L)).thenReturn(Flux.empty());
@@ -57,7 +57,7 @@ class DeleteBootcampUseCaseTest {
 
     @Test
     void deleteBootcamp_WhenNonAdminUser_ShouldReturnForbidden() {
-        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").isAdmin(false).build();
+        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").name("User").isAdmin(false).build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(regularUser));
 
@@ -68,7 +68,7 @@ class DeleteBootcampUseCaseTest {
 
     @Test
     void deleteBootcamp_WhenHasUniqueCapacities_ShouldPublishEvent() {
-        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").isAdmin(true).build();
+        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").name("Admin").isAdmin(true).build();
         List<Long> uniqueCapacityIds = List.of(1L, 2L);
 
         when(userContext.currentUser()).thenReturn(Mono.just(adminUser));

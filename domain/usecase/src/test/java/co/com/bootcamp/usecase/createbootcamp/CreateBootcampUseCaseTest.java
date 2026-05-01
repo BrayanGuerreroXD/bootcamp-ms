@@ -42,7 +42,7 @@ class CreateBootcampUseCaseTest {
 
     @Test
     void createBootcamp_WhenAdminUser_ShouldCreateSuccessfully() {
-        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").isAdmin(true).build();
+        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").name("Admin").isAdmin(true).build();
         Bootcamp bootcamp = Bootcamp.builder()
                 .name("Java Bootcamp")
                 .description("Learn Java")
@@ -63,7 +63,7 @@ class CreateBootcampUseCaseTest {
 
     @Test
     void createBootcamp_WhenNonAdminUser_ShouldReturnForbidden() {
-        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").isAdmin(false).build();
+        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").name("User").isAdmin(false).build();
         Bootcamp bootcamp = Bootcamp.builder().name("Test").build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(regularUser));

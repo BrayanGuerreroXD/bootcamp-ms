@@ -20,13 +20,13 @@ public class SignUpBootcampUseCase implements SignUpBootcampService {
     private final UserContext userContext;
 
     @Override
-    public Mono<BootcampPeople> signUp(Long bootcampId, String email) {
+    public Mono<BootcampPeople> signUp(Long bootcampId) {
         return userContext.currentUser()
                 .flatMap(user -> {
                     if (Boolean.TRUE.equals(user.getIsAdmin())) {
                         return Mono.error(new ForbiddenException(GlobalExceptionEnum.FORBIDDEN_ACCESS));
                     }
-                    String normalizedEmail = email.toLowerCase();
+                    String normalizedEmail = user.getEmail().toLowerCase();
                     return bootcampPeopleRepository.countByEmail(normalizedEmail)
                             .flatMap(count -> {
                                 if (count >= 5) {
@@ -46,6 +46,7 @@ public class SignUpBootcampUseCase implements SignUpBootcampService {
                                                         BootcampPeople people = BootcampPeople.builder()
                                                                 .bootcamp(bootcamp)
                                                                 .email(normalizedEmail)
+                                                                .name(user.getName())
                                                                 .build();
                                                         return bootcampPeopleRepository.save(people);
                                                     });

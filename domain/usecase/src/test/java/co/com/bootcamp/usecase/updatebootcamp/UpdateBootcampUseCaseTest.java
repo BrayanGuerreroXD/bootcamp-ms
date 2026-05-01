@@ -44,7 +44,7 @@ class UpdateBootcampUseCaseTest {
 
     @Test
     void updateBootcamp_WhenAdminUser_ShouldUpdateSuccessfully() {
-        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").isAdmin(true).build();
+        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").name("Admin").isAdmin(true).build();
         Bootcamp existing = Bootcamp.builder().id(1L).name("Old Name").build();
         Bootcamp updateData = Bootcamp.builder()
                 .name("New Name")
@@ -68,7 +68,7 @@ class UpdateBootcampUseCaseTest {
 
     @Test
     void updateBootcamp_WhenNonAdminUser_ShouldReturnForbidden() {
-        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").isAdmin(false).build();
+        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").name("User").isAdmin(false).build();
         Bootcamp bootcamp = Bootcamp.builder().name("Test").build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(regularUser));
@@ -80,7 +80,7 @@ class UpdateBootcampUseCaseTest {
 
     @Test
     void updateBootcamp_WhenNotFound_ShouldReturnNotFound() {
-        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").isAdmin(true).build();
+        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").name("Admin").isAdmin(true).build();
         Bootcamp bootcamp = Bootcamp.builder().name("Test").build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(adminUser));

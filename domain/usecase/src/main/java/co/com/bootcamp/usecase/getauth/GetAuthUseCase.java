@@ -19,7 +19,7 @@ public class GetAuthUseCase implements GetAuthService {
     public Mono<LoggedUser> getByToken(String token) {
         return authRepository.findByToken(token)
                 .filter(this::isTokenValid)
-                .map(auth -> LoggedUser.builder().email(auth.getEmail()).build())
+                .map(auth -> LoggedUser.builder().email(auth.getEmail()).name(auth.getName()).build())
                 .switchIfEmpty(Mono.error(new UnauthorizedException(GlobalExceptionEnum.UNAUTHORIZED)));
     }
 
