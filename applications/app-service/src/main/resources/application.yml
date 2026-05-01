@@ -38,3 +38,4 @@ kafka:
     sync-capacity-catalog: sync.capacity.catalog
     generic-auth-login: generic.auth.login
     generic-auth-logout: generic.auth.logout
+    delete-bootcamp-match: delete.bootcamp.match

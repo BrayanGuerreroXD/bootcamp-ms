@@ -9,4 +9,5 @@ import lombok.Getter;
 @Builder
 public class LoggedUser {
     private String email;
+    private Boolean isAdmin;
 }

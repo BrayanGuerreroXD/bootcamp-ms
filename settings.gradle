@@ -18,8 +18,10 @@ include ':model'
 include ':usecase'
 include ':driven-adapters'
 include ':entry-points'
+include ':infrastructure:kafka-publisher'
 project(':app-service').projectDir = file('./applications/app-service')
 project(':model').projectDir = file('./domain/model')
 project(':usecase').projectDir = file('./domain/usecase')
 project(':driven-adapters').projectDir = file('./infrastructure/driven-adapters')
 project(':entry-points').projectDir = file('./infrastructure/entry-points')
+project(':infrastructure:kafka-publisher').projectDir = file('./infrastructure/kafka-publisher')
