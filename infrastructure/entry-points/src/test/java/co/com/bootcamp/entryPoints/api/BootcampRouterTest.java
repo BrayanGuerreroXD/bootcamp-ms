@@ -72,24 +72,17 @@ class BootcampRouterTest {
 
     @Test
     void POST_bootcamps_returns201_withBootcampResponse() {
-        Bootcamp domain = Bootcamp.builder()
+        Bootcamp saved = Bootcamp.builder()
+                .id(1L)
                 .name("Java Bootcamp")
                 .description("Learn Java")
-                .initTime(LocalDateTime.now())
-                .duration(30)
-                .capacities(List.of())
                 .build();
-        Bootcamp saved = domain.toBuilder().id(1L).build();
         BootcampResponse response = BootcampResponse.builder()
                 .id(1L)
                 .name("Java Bootcamp")
                 .description("Learn Java")
-                .initTime(LocalDateTime.now())
-                .duration(30)
-                .capacityCount(0)
                 .build();
 
-        when(mapper.toDomain(any(BootcampRequest.class))).thenReturn(domain);
         when(createService.create(any(Bootcamp.class))).thenReturn(Mono.just(saved));
         when(mapper.toResponse(any(Bootcamp.class))).thenReturn(response);
 
@@ -105,12 +98,6 @@ class BootcampRouterTest {
 
     @Test
     void POST_bootcamps_returns409_whenNameAlreadyExists() {
-        Bootcamp domain = Bootcamp.builder()
-                .name("Java Bootcamp")
-                .description("Learn Java")
-                .build();
-
-        when(mapper.toDomain(any(BootcampRequest.class))).thenReturn(domain);
         when(createService.create(any(Bootcamp.class)))
                 .thenReturn(Mono.error(new ConflictException(GlobalExceptionEnum.CONFLICT)));
 
@@ -181,18 +168,17 @@ class BootcampRouterTest {
 
     @Test
     void PUT_bootcamps_byId_returns200_withUpdatedBootcamp() {
-        Bootcamp domain = Bootcamp.builder()
+        Bootcamp updated = Bootcamp.builder()
+                .id(1L)
                 .name("Updated Bootcamp")
                 .description("Updated description")
                 .build();
-        Bootcamp updated = domain.toBuilder().id(1L).build();
         BootcampResponse response = BootcampResponse.builder()
                 .id(1L)
                 .name("Updated Bootcamp")
                 .description("Updated description")
                 .build();
 
-        when(mapper.toDomainUpdate(any(BootcampRequest.class))).thenReturn(domain);
         when(updateService.update(eq(1L), any(Bootcamp.class))).thenReturn(Mono.just(updated));
         when(mapper.toResponse(any(Bootcamp.class))).thenReturn(response);
 
@@ -208,12 +194,6 @@ class BootcampRouterTest {
 
     @Test
     void PUT_bootcamps_byId_returns404_whenNotFound() {
-        Bootcamp domain = Bootcamp.builder()
-                .name("Java Bootcamp")
-                .description("Learn Java")
-                .build();
-
-        when(mapper.toDomainUpdate(any(BootcampRequest.class))).thenReturn(domain);
         when(updateService.update(eq(99L), any(Bootcamp.class)))
                 .thenReturn(Mono.error(new NotFoundException(GlobalExceptionEnum.NOT_FOUND)));
 
