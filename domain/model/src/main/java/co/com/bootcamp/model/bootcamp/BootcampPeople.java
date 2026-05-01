@@ -11,4 +11,5 @@ public class BootcampPeople {
     private Bootcamp bootcamp;
     private Long bootcampId;
     private String email;
+    private String name;
 }

@@ -12,4 +12,6 @@ public class SignUpBootcampRequest {
     private Long bootcampId;
 
     private String email;
+
+    private String name;
 }

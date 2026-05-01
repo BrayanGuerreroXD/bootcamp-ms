@@ -22,6 +22,8 @@ public class BootcampPeopleEntity {
 
     private String email;
 
+    private String name;
+
     @Column("created_at")
     private LocalDateTime createdAt;
 }
