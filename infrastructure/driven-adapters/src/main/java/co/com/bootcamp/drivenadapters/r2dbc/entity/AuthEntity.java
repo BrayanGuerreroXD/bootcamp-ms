@@ -27,6 +27,9 @@ public class AuthEntity {
     @Column("token")
     private String token;
 
+    @Column("name")
+    private String name;
+
     @Column("is_admin")
     private Boolean isAdmin;
 

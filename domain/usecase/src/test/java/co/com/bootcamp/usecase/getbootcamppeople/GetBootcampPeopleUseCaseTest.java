@@ -63,7 +63,7 @@ class GetBootcampPeopleUseCaseTest {
 
     @Test
     void getByEmail_WhenAdminUser_ShouldReturnForbidden() {
-        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").isAdmin(true).build();
+        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").name("Admin").isAdmin(true).build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(adminUser));
 

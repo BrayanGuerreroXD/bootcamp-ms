@@ -4,5 +4,5 @@ import co.com.bootcamp.model.bootcamp.BootcampPeople;
 import reactor.core.publisher.Mono;
 
 public interface SignUpBootcampService {
-    Mono<BootcampPeople> signUp(Long bootcampId, String email);
+    Mono<BootcampPeople> signUp(Long bootcampId);
 }

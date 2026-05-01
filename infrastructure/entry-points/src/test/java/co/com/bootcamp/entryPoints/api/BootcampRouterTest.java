@@ -239,12 +239,12 @@ class BootcampRouterTest {
                 .email("test@example.com")
                 .build();
 
-        when(signUpService.signUp(eq(1L), eq("test@example.com"))).thenReturn(Mono.just(people));
+        when(signUpService.signUp(eq(1L))).thenReturn(Mono.just(people));
         when(mapper.toResponse(any(BootcampPeople.class))).thenReturn(response);
 
         client.post().uri("/api/bootcamps/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new SignUpBootcampRequest(1L, "test@example.com"))
+                .bodyValue(new SignUpBootcampRequest(1L))
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()

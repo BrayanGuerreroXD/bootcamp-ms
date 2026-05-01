@@ -19,7 +19,7 @@ public class SignUpBootcampHandler {
 
     public Mono<ServerResponse> handle(ServerRequest request) {
         return request.bodyToMono(SignUpBootcampRequest.class)
-                .flatMap(req -> signUpService.signUp(req.getBootcampId(), req.getEmail()))
+                .flatMap(req -> signUpService.signUp(req.getBootcampId()))
                 .map(mapper::toResponse)
                 .map(GenericResponseData::of)
                 .flatMap(body -> ServerResponse.status(HttpStatus.CREATED).bodyValue(body));

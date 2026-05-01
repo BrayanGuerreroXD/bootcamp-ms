@@ -43,9 +43,9 @@ class SignUpBootcampUseCaseTest {
 
     @Test
     void signUp_WhenNonAdminUser_ShouldEnrollSuccessfully() {
-        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").isAdmin(false).build();
+        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").name("Test User").isAdmin(false).build();
         Bootcamp bootcamp = Bootcamp.builder().id(1L).name("Java Bootcamp").build();
-        BootcampPeople saved = BootcampPeople.builder().id(1L).email("user@test.com").bootcamp(bootcamp).build();
+        BootcampPeople saved = BootcampPeople.builder().id(1L).email("user@test.com").name("Test User").bootcamp(bootcamp).build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(regularUser));
         when(bootcampPeopleRepository.countByEmail("user@test.com")).thenReturn(Mono.just(0L));
@@ -53,57 +53,57 @@ class SignUpBootcampUseCaseTest {
         when(bootcampRepository.findById(1L)).thenReturn(Mono.just(bootcamp));
         when(bootcampPeopleRepository.save(any(BootcampPeople.class))).thenReturn(Mono.just(saved));
 
-        StepVerifier.create(useCase.signUp(1L, "user@test.com"))
-                .expectNextMatches(result -> result.getEmail().equals("user@test.com"))
+        StepVerifier.create(useCase.signUp(1L))
+                .expectNextMatches(result -> result.getEmail().equals("user@test.com") && result.getName().equals("Test User"))
                 .verifyComplete();
     }
 
     @Test
     void signUp_WhenAdminUser_ShouldReturnForbidden() {
-        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").isAdmin(true).build();
+        LoggedUser adminUser = LoggedUser.builder().email("admin@test.com").name("Admin").isAdmin(true).build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(adminUser));
 
-        StepVerifier.create(useCase.signUp(1L, "admin@test.com"))
+        StepVerifier.create(useCase.signUp(1L))
                 .expectError(ForbiddenException.class)
                 .verify();
     }
 
     @Test
     void signUp_WhenAlreadyEnrolled_ShouldReturnConflict() {
-        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").isAdmin(false).build();
+        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").name("User").isAdmin(false).build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(regularUser));
         when(bootcampPeopleRepository.countByEmail("user@test.com")).thenReturn(Mono.just(0L));
         when(bootcampPeopleRepository.existsByBootcampIdAndEmail(1L, "user@test.com")).thenReturn(Mono.just(true));
 
-        StepVerifier.create(useCase.signUp(1L, "user@test.com"))
+        StepVerifier.create(useCase.signUp(1L))
                 .expectError(ConflictException.class)
                 .verify();
     }
 
     @Test
     void signUp_WhenMaxEnrollmentsReached_ShouldReturnBadRequest() {
-        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").isAdmin(false).build();
+        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").name("User").isAdmin(false).build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(regularUser));
         when(bootcampPeopleRepository.countByEmail("user@test.com")).thenReturn(Mono.just(5L));
 
-        StepVerifier.create(useCase.signUp(1L, "user@test.com"))
+        StepVerifier.create(useCase.signUp(1L))
                 .expectError(BadRequestException.class)
                 .verify();
     }
 
     @Test
     void signUp_WhenBootcampNotFound_ShouldReturnNotFound() {
-        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").isAdmin(false).build();
+        LoggedUser regularUser = LoggedUser.builder().email("user@test.com").name("User").isAdmin(false).build();
 
         when(userContext.currentUser()).thenReturn(Mono.just(regularUser));
         when(bootcampPeopleRepository.countByEmail("user@test.com")).thenReturn(Mono.just(0L));
         when(bootcampPeopleRepository.existsByBootcampIdAndEmail(99L, "user@test.com")).thenReturn(Mono.just(false));
         when(bootcampRepository.findById(99L)).thenReturn(Mono.empty());
 
-        StepVerifier.create(useCase.signUp(99L, "user@test.com"))
+        StepVerifier.create(useCase.signUp(99L))
                 .expectError(NotFoundException.class)
                 .verify();
     }

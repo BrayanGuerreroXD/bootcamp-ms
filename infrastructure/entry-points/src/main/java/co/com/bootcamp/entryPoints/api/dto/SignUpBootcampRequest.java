@@ -10,6 +10,4 @@ import lombok.*;
 public class SignUpBootcampRequest {
     @NotNull(message = "Bootcamp ID is required")
     private Long bootcampId;
-
-    private String email;
 }
