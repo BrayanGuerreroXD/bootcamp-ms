@@ -1,0 +1,66 @@
+package co.com.bootcamp.entryPoints.api.exception;
+
+import co.com.bootcamp.model.exception.BadRequestException;
+import co.com.bootcamp.model.exception.ConflictException;
+import co.com.bootcamp.model.exception.NotFoundException;
+import co.com.bootcamp.model.exception.UnauthorizedException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebExceptionHandler;
+import reactor.core.publisher.Mono;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Slf4j
+@Component
+@Order(-2)
+@RequiredArgsConstructor
+public class GlobalExceptionHandler implements WebExceptionHandler {
+    private final ObjectMapper objectMapper;
+
+    @Override
+    public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
+        HttpStatus status = resolveStatus(ex);
+        GenericResponseData<ErrorData> body = buildErrorBody(ex);
+
+        exchange.getResponse().setStatusCode(status);
+        exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+        return Mono.fromCallable(() -> objectMapper.writeValueAsBytes(body))
+                .flatMap(bytes -> exchange.getResponse()
+                        .writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(bytes))))
+                .then();
+    }
+
+    private HttpStatus resolveStatus(Throwable ex) {
+        if (ex instanceof BadRequestException) return HttpStatus.BAD_REQUEST;
+        if (ex instanceof NotFoundException) return HttpStatus.NOT_FOUND;
+        if (ex instanceof ConflictException) return HttpStatus.CONFLICT;
+        if (ex instanceof UnauthorizedException) return HttpStatus.UNAUTHORIZED;
+        return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    private GenericResponseData<ErrorData> buildErrorBody(Throwable ex) {
+        if (ex instanceof BadRequestException e) return GenericResponseData.of(ErrorData.of(e.getError()));
+        if (ex instanceof NotFoundException e) return GenericResponseData.of(ErrorData.of(e.getError()));
+        if (ex instanceof ConflictException e) return GenericResponseData.of(ErrorData.of(e.getError()));
+        if (ex instanceof UnauthorizedException e) return GenericResponseData.of(ErrorData.of(e.getError()));
+        return GenericResponseData.of(new ErrorData("UNKNOWN", "Internal Server Error", "An unexpected error occurred"));
+    }
+
+    @lombok.Getter
+    @lombok.AllArgsConstructor
+    @lombok.Builder
+    public static class GenericResponseData<T> {
+        private T data;
+
+        public static <T> GenericResponseData<T> of(T data) {
+            return GenericResponseData.<T>builder().data(data).build();
+        }
+    }
+}
