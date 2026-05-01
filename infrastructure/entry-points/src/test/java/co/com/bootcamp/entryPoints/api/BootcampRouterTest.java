@@ -244,7 +244,7 @@ class BootcampRouterTest {
 
         client.post().uri("/api/bootcamps/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new SignUpBootcampRequest(1L, "test@example.com"))
+                .bodyValue(new SignUpBootcampRequest(1L, "test@example.com", null))
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
