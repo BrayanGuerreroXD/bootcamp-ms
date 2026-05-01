@@ -39,4 +39,4 @@ kafka:
     generic-auth-login: generic.auth.login
     generic-auth-logout: generic.auth.logout
     delete-bootcamp-match: delete.bootcamp.match
-    sync-bootcamp-capacity-match: sync.bootcamp.capacity.match
+    sync-capacities-bootcamps-match: sync.capacities.bootcamps.match
