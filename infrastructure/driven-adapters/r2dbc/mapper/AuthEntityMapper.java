@@ -1,0 +1,16 @@
+package co.com.bootcamp.drivenAdapters.r2dbc.mapper;
+
+import co.com.bootcamp.drivenAdapters.r2dbc.entity.AuthEntity;
+import co.com.bootcamp.model.auth.Auth;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface AuthEntityMapper {
+    @Mapping(target = "createdAt", ignore = true)
+    Auth toModel(AuthEntity entity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    AuthEntity toEntity(Auth model);
+}
