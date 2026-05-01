@@ -1,5 +1,6 @@
 package co.com.bootcamp.entryPoints.api.exception;
 
+import co.com.bootcamp.entryPoints.api.dto.GenericResponseData;
 import co.com.bootcamp.model.exception.BadRequestException;
 import co.com.bootcamp.model.exception.ConflictException;
 import co.com.bootcamp.model.exception.NotFoundException;
@@ -51,16 +52,5 @@ public class GlobalExceptionHandler implements WebExceptionHandler {
         if (ex instanceof ConflictException e) return GenericResponseData.of(ErrorData.of(e.getError()));
         if (ex instanceof UnauthorizedException e) return GenericResponseData.of(ErrorData.of(e.getError()));
         return GenericResponseData.of(new ErrorData("UNKNOWN", "Internal Server Error", "An unexpected error occurred"));
-    }
-
-    @lombok.Getter
-    @lombok.AllArgsConstructor
-    @lombok.Builder
-    public static class GenericResponseData<T> {
-        private T data;
-
-        public static <T> GenericResponseData<T> of(T data) {
-            return GenericResponseData.<T>builder().data(data).build();
-        }
     }
 }

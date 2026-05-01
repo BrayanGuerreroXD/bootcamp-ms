@@ -1,5 +1,6 @@
 package co.com.bootcamp.drivenadapters.r2dbc.adapter;
 
+import co.com.bootcamp.drivenadapters.r2dbc.entity.AuthEntity;
 import co.com.bootcamp.drivenadapters.r2dbc.mapper.AuthEntityMapper;
 import co.com.bootcamp.drivenadapters.r2dbc.repository.AuthEntityRepository;
 import co.com.bootcamp.model.auth.Auth;

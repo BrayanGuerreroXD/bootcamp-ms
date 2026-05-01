@@ -9,5 +9,6 @@ import lombok.*;
 public class BootcampPeople {
     private Long id;
     private Bootcamp bootcamp;
+    private Long bootcampId;
     private String email;
 }

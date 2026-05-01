@@ -15,6 +15,5 @@ public interface BootcampEntityMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "capacities", ignore = true)
     BootcampEntity toEntity(Bootcamp model);
 }

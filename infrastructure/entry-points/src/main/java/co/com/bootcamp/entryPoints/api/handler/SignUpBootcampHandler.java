@@ -1,8 +1,8 @@
 package co.com.bootcamp.entryPoints.api.handler;
 
-import co.com.bootcamp.drivenAdapters.r2dbc.mapper.BootcampDtoMapper;
+import co.com.bootcamp.entryPoints.api.dto.GenericResponseData;
 import co.com.bootcamp.entryPoints.api.dto.SignUpBootcampRequest;
-import co.com.bootcamp.entryPoints.api.exception.GlobalExceptionHandler.GenericResponseData;
+import co.com.bootcamp.entryPoints.api.mapper.BootcampDtoMapper;
 import co.com.bootcamp.usecase.signupbootcamp.SignUpBootcampService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

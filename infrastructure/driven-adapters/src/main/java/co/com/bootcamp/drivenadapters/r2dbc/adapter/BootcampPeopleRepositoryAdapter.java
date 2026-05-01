@@ -1,5 +1,6 @@
 package co.com.bootcamp.drivenadapters.r2dbc.adapter;
 
+import co.com.bootcamp.drivenadapters.r2dbc.entity.BootcampPeopleEntity;
 import co.com.bootcamp.drivenadapters.r2dbc.mapper.BootcampPeopleEntityMapper;
 import co.com.bootcamp.drivenadapters.r2dbc.repository.BootcampPeopleEntityRepository;
 import co.com.bootcamp.model.bootcamp.BootcampPeople;

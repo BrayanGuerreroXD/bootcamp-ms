@@ -1,7 +1,7 @@
 package co.com.bootcamp.entryPoints.api.handler;
 
 import co.com.bootcamp.entryPoints.api.dto.BootcampRequest;
-import co.com.bootcamp.entryPoints.api.exception.GlobalExceptionHandler.GenericResponseData;
+import co.com.bootcamp.entryPoints.api.dto.GenericResponseData;
 import co.com.bootcamp.entryPoints.api.mapper.BootcampDtoMapper;
 import co.com.bootcamp.usecase.updatebootcamp.UpdateBootcampService;
 import lombok.RequiredArgsConstructor;
