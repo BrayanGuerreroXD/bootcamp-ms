@@ -29,8 +29,9 @@ public class AuthLogoutConsumer {
 
             deleteAuthService.deleteByEmailAndToken(event.getEmail(), event.getToken())
                     .subscribe(
-                            () -> log.info("Auth deleted successfully for email: {}", event.getEmail()),
-                            error -> log.error("Error deleting auth logout: {}", error.getMessage())
+                            result -> log.info("Auth deleted successfully for email: {}", event.getEmail()),
+                            error -> log.error("Error deleting auth logout: {}", error.getMessage()),
+                            () -> {}
                     );
         } catch (Exception e) {
             log.error("Error processing auth logout message: {}", e.getMessage());
