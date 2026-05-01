@@ -11,6 +11,7 @@ import lombok.Setter;
 @Builder(toBuilder = true)
 public class TechnologyCapacityCatalog {
     private Long id;
+    private Long capacityCatalogId;
     private Long externalId;
     private String name;
 }
