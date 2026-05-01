@@ -4,6 +4,7 @@ import co.com.bootcamp.model.bootcamp.Bootcamp;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampCapacityRepository;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampRepository;
 import co.com.bootcamp.model.capacitycatalog.CapacityCatalog;
+import co.com.bootcamp.model.event.gateways.EventGateway;
 import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.auth.LoggedUser;
 import co.com.bootcamp.model.security.UserContext;
@@ -33,11 +34,14 @@ class CreateBootcampUseCaseTest {
     @Mock
     private UserContext userContext;
 
+    @Mock
+    private EventGateway eventGateway;
+
     private CreateBootcampUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new CreateBootcampUseCase(bootcampRepository, bootcampCapacityRepository, userContext);
+        useCase = new CreateBootcampUseCase(bootcampRepository, bootcampCapacityRepository, eventGateway, userContext);
     }
 
     @Test
@@ -55,6 +59,7 @@ class CreateBootcampUseCaseTest {
         when(userContext.currentUser()).thenReturn(Mono.just(adminUser));
         when(bootcampRepository.save(any(Bootcamp.class))).thenReturn(Mono.just(savedBootcamp));
         when(bootcampCapacityRepository.saveAll(any())).thenReturn(reactor.core.publisher.Flux.empty());
+        when(eventGateway.publishBootcampCapacityMatch(any())).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.create(bootcamp))
                 .expectNextMatches(result -> result.getId().equals(1L))

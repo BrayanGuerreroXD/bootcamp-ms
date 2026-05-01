@@ -2,8 +2,11 @@ package co.com.bootcamp.usecase.updatebootcamp;
 
 import co.com.bootcamp.model.bootcamp.Bootcamp;
 import co.com.bootcamp.model.bootcamp.BootcampCapacity;
+import co.com.bootcamp.model.capacitycatalog.CapacityCatalog;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampCapacityRepository;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampRepository;
+import co.com.bootcamp.model.event.BootcampCapacityMatchEvent;
+import co.com.bootcamp.model.event.gateways.EventGateway;
 import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.exception.GlobalExceptionEnum;
 import co.com.bootcamp.model.exception.NotFoundException;
@@ -12,10 +15,13 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 public class UpdateBootcampUseCase implements UpdateBootcampService {
     private final BootcampRepository bootcampRepository;
     private final BootcampCapacityRepository bootcampCapacityRepository;
+    private final EventGateway eventGateway;
     private final UserContext userContext;
 
     @Override
@@ -43,7 +49,20 @@ public class UpdateBootcampUseCase implements UpdateBootcampService {
                                                         .capacity(cap)
                                                         .build())
                                                 .transform(bootcampCapacityRepository::saveAll)
-                                                .then(Mono.just(saved)));
+                                                .then(Mono.fromCallable(() -> {
+                                                    if (bootcamp.getCapacities() != null && !bootcamp.getCapacities().isEmpty()) {
+                                                        List<Long> capacityIds = bootcamp.getCapacities().stream()
+                                                                .map(CapacityCatalog::getId)
+                                                                .toList();
+                                                        BootcampCapacityMatchEvent event = BootcampCapacityMatchEvent.builder()
+                                                                .bootcampId(saved.getId())
+                                                                .capacityIds(capacityIds)
+                                                                .build();
+                                                        eventGateway.publishBootcampCapacityMatch(event)
+                                                                .subscribe();
+                                                    }
+                                                    return saved;
+                                                })));
                             });
                 });
     }
