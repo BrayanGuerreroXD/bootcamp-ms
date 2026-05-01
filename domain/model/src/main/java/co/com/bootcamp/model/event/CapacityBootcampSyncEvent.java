@@ -7,7 +7,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @Builder
-public class BootcampCapacityMatchEvent {
+public class CapacityBootcampSyncEvent {
     private Long bootcampId;
     private List<Long> capacityIds;
 }

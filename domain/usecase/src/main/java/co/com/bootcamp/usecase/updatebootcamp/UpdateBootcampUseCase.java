@@ -5,7 +5,7 @@ import co.com.bootcamp.model.bootcamp.BootcampCapacity;
 import co.com.bootcamp.model.capacitycatalog.CapacityCatalog;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampCapacityRepository;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampRepository;
-import co.com.bootcamp.model.event.BootcampCapacityMatchEvent;
+import co.com.bootcamp.model.event.CapacityBootcampSyncEvent;
 import co.com.bootcamp.model.event.gateways.EventGateway;
 import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.exception.GlobalExceptionEnum;
@@ -54,11 +54,11 @@ public class UpdateBootcampUseCase implements UpdateBootcampService {
                                                         List<Long> capacityIds = bootcamp.getCapacities().stream()
                                                                 .map(CapacityCatalog::getId)
                                                                 .toList();
-                                                        BootcampCapacityMatchEvent event = BootcampCapacityMatchEvent.builder()
-                                                                .bootcampId(saved.getId())
-                                                                .capacityIds(capacityIds)
-                                                                .build();
-                                                        eventGateway.publishBootcampCapacityMatch(event)
+CapacityBootcampSyncEvent event = CapacityBootcampSyncEvent.builder()
+                                                        .bootcampId(saved.getId())
+                                                        .capacityIds(capacityIds)
+                                                        .build();
+                                                eventGateway.publishCapacitiesBootcampsMatch(event)
                                                                 .subscribe();
                                                     }
                                                     return saved;
