@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 7800
 
 spring:
   application:
@@ -39,3 +39,4 @@ kafka:
     generic-auth-login: generic.auth.login
     generic-auth-logout: generic.auth.logout
     delete-bootcamp-match: delete.bootcamp.match
+    sync-bootcamp-capacity-match: sync.bootcamp.capacity.match

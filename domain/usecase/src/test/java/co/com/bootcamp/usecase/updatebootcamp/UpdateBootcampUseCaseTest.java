@@ -4,6 +4,7 @@ import co.com.bootcamp.model.bootcamp.Bootcamp;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampCapacityRepository;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampRepository;
 import co.com.bootcamp.model.capacitycatalog.CapacityCatalog;
+import co.com.bootcamp.model.event.gateways.EventGateway;
 import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.exception.NotFoundException;
 import co.com.bootcamp.model.auth.LoggedUser;
@@ -35,11 +36,14 @@ class UpdateBootcampUseCaseTest {
     @Mock
     private UserContext userContext;
 
+    @Mock
+    private EventGateway eventGateway;
+
     private UpdateBootcampUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new UpdateBootcampUseCase(bootcampRepository, bootcampCapacityRepository, userContext);
+        useCase = new UpdateBootcampUseCase(bootcampRepository, bootcampCapacityRepository, eventGateway, userContext);
     }
 
     @Test
@@ -60,6 +64,7 @@ class UpdateBootcampUseCaseTest {
         when(bootcampRepository.save(any(Bootcamp.class))).thenReturn(Mono.just(updated));
         when(bootcampCapacityRepository.deleteByBootcampId(1L)).thenReturn(Mono.empty());
         when(bootcampCapacityRepository.saveAll(any())).thenReturn(Flux.empty());
+        when(eventGateway.publishBootcampCapacityMatch(any())).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.update(1L, updateData))
                 .expectNextMatches(result -> result.getName().equals("New Name"))
