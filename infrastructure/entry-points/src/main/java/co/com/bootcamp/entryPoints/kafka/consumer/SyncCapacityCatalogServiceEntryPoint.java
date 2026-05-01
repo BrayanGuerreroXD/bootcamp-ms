@@ -1,9 +1,9 @@
-package co.com.bootcamp.infrastructure.entryPoints.kafka.consumer;
+package co.com.bootcamp.entryPoints.kafka.consumer;
 
 import co.com.bootcamp.model.capacitycatalog.CapacityCatalog;
 import co.com.bootcamp.model.technologycapacitycatalog.TechnologyCapacityCatalog;
 import co.com.bootcamp.usecase.synccapacitycatalog.SyncCapacityCatalogService;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,7 +51,7 @@ public class SyncCapacityCatalogServiceEntryPoint {
         }
     }
 
-    private SyncCapacityCatalogEvent parseEvent(String message) {
+    private SyncCapacityCatalogEvent parseEvent(String message) throws JsonProcessingException {
         return new com.fasterxml.jackson.databind.ObjectMapper().readValue(message, SyncCapacityCatalogEvent.class);
     }
 

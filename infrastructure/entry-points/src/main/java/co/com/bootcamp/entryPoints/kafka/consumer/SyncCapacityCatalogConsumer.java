@@ -1,4 +1,4 @@
-package co.com.bootcamp.infrastructure.entryPoints.kafka.consumer;
+package co.com.bootcamp.entryPoints.kafka.consumer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
