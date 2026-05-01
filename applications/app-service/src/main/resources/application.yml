@@ -1,14 +1,41 @@
-##Spring Configuration
 server:
   port: 8080
+
 spring:
   application:
     name: bootcamp-ms
   devtools:
     add-properties: false
-  h2:
-    console:
-      enabled: true
-      path: /h2
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/db_bootcamp
+    username: root
+    password: 1234
+  flyway:
+    url: jdbc:mysql://localhost:3306/db_bootcamp
+    user: root
+    password: 1234
+    locations: classpath:db/migration
   profiles:
-    include:
+    include: null
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: bootcamp-ms-group
+      auto-offset-reset: earliest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+kafka:
+  topics:
+    sync-capacity-catalog: sync.capacity.catalog
+    generic-auth-login: generic.auth.login
+    generic-auth-logout: generic.auth.logout
+    delete-bootcamp-match: delete.bootcamp.match
