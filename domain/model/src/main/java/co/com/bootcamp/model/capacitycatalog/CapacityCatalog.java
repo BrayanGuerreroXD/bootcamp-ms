@@ -1,5 +1,6 @@
 package co.com.bootcamp.model.capacitycatalog;
 
+import co.com.bootcamp.model.technologycapacitycatalog.TechnologyCapacityCatalog;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

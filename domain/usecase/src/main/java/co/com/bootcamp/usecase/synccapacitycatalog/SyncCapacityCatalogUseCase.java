@@ -5,6 +5,7 @@ import co.com.bootcamp.model.capacitycatalog.gateways.CapacityCatalogRepository;
 import co.com.bootcamp.model.technologycapacitycatalog.TechnologyCapacityCatalog;
 import co.com.bootcamp.model.technologycapacitycatalog.gateways.TechnologyCapacityCatalogRepository;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class SyncCapacityCatalogUseCase implements SyncCapacityCatalogService {
                                     .build())
                             .toList();
                     return technologyRepository.deleteByCapacityCatalogId(savedCatalog.getId())
-                            .thenMany(technologyRepository.saveAll(technologiesWithCatalogId))
+                            .thenMany(technologyRepository.saveAll(Flux.fromIterable(technologiesWithCatalogId)))
                             .collectList()
                             .thenReturn(savedCatalog);
                 });
