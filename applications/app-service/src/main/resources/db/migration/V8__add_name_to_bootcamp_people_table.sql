@@ -1,0 +1,1 @@
+ALTER TABLE bootcamp_people ADD COLUMN name VARCHAR(255);
