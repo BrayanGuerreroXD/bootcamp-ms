@@ -10,4 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class KafkaTopicsProperties {
     private String deleteBootcampMatch;
     private String syncCapacitiesBootcampsMatch;
+    private String bootcampReportSync;
 }

@@ -3,6 +3,7 @@ package co.com.bootcamp.kafka.adapter;
 import co.com.bootcamp.kafka.config.KafkaTopicsProperties;
 import co.com.bootcamp.model.event.CapacityBootcampSyncEvent;
 import co.com.bootcamp.model.event.BootcampDeleteMatchEvent;
+import co.com.bootcamp.model.event.BootcampEvent;
 import co.com.bootcamp.model.event.gateways.EventGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -23,5 +24,10 @@ public class EventPublisherAdapter implements EventGateway {
     @Override
     public Mono<Void> publishCapacitiesBootcampsMatch(CapacityBootcampSyncEvent event) {
         return Mono.fromFuture(kafkaTemplate.send(topics.getSyncCapacitiesBootcampsMatch(), event)).then();
+    }
+
+    @Override
+    public Mono<Void> publishBootcampReportSync(BootcampEvent event) {
+        return Mono.fromFuture(kafkaTemplate.send(topics.getBootcampReportSync(), event)).then();
     }
 }
