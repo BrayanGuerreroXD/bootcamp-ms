@@ -8,6 +8,7 @@ import co.com.bootcamp.model.event.gateways.EventGateway;
 import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.auth.LoggedUser;
 import co.com.bootcamp.model.security.UserContext;
+import co.com.bootcamp.usecase.getfullbootcamp.GetFullBootcampService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,11 +39,15 @@ class CreateBootcampUseCaseTest {
     @Mock
     private EventGateway eventGateway;
 
+    @Mock
+    private GetFullBootcampService getFullBootcampService;
+
     private CreateBootcampUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new CreateBootcampUseCase(bootcampRepository, bootcampCapacityRepository, eventGateway, userContext);
+        lenient().when(getFullBootcampService.publishReport(any())).thenReturn(Mono.empty());
+        useCase = new CreateBootcampUseCase(bootcampRepository, bootcampCapacityRepository, eventGateway, userContext, getFullBootcampService);
     }
 
     @Test

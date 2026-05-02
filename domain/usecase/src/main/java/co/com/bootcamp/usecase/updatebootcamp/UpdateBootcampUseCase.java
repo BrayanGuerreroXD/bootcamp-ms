@@ -56,18 +56,16 @@ public class UpdateBootcampUseCase implements UpdateBootcampService {
                                                         List<Long> capacityIds = bootcamp.getCapacities().stream()
                                                                 .map(CapacityCatalog::getId)
                                                                 .toList();
-CapacityBootcampSyncEvent event = CapacityBootcampSyncEvent.builder()
-                                                        .bootcampId(saved.getId())
-                                                        .capacityIds(capacityIds)
-                                                        .build();
-                                                eventGateway.publishCapacitiesBootcampsMatch(event)
+                                                        CapacityBootcampSyncEvent event = CapacityBootcampSyncEvent.builder()
+                                                                .bootcampId(saved.getId())
+                                                                .capacityIds(capacityIds)
+                                                                .build();
+                                                        eventGateway.publishCapacitiesBootcampsMatch(event)
                                                                 .subscribe();
                                                     }
+                                                    getFullBootcampService.publishReport(saved.getId()).subscribe();
                                                     return saved;
-                                                })))
-                                                .then(Mono.fromRunnable(() ->
-                                                    getFullBootcampService.publishReport(saved.getId()).subscribe()
-                                                ));
+                                                })));
                             });
                 });
     }

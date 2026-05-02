@@ -9,6 +9,7 @@ import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.exception.NotFoundException;
 import co.com.bootcamp.model.auth.LoggedUser;
 import co.com.bootcamp.model.security.UserContext;
+import co.com.bootcamp.usecase.getfullbootcamp.GetFullBootcampService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,11 +40,14 @@ class UpdateBootcampUseCaseTest {
     @Mock
     private EventGateway eventGateway;
 
+    @Mock
+    private GetFullBootcampService getFullBootcampService;
+
     private UpdateBootcampUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new UpdateBootcampUseCase(bootcampRepository, bootcampCapacityRepository, eventGateway, userContext);
+        useCase = new UpdateBootcampUseCase(bootcampRepository, bootcampCapacityRepository, eventGateway, userContext, getFullBootcampService);
     }
 
     @Test
@@ -65,6 +69,7 @@ class UpdateBootcampUseCaseTest {
         when(bootcampCapacityRepository.deleteByBootcampId(1L)).thenReturn(Mono.empty());
         when(bootcampCapacityRepository.saveAll(any())).thenReturn(Flux.empty());
         when(eventGateway.publishCapacitiesBootcampsMatch(any())).thenReturn(Mono.empty());
+        when(getFullBootcampService.publishReport(any())).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.update(1L, updateData))
                 .expectNextMatches(result -> result.getName().equals("New Name"))
