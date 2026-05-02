@@ -10,6 +10,7 @@ import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.exception.GlobalExceptionEnum;
 import co.com.bootcamp.model.exception.NotFoundException;
 import co.com.bootcamp.model.security.UserContext;
+import co.com.bootcamp.usecase.getfullbootcamp.GetFullBootcampService;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -18,6 +19,7 @@ public class SignUpBootcampUseCase implements SignUpBootcampService {
     private final BootcampRepository bootcampRepository;
     private final BootcampPeopleRepository bootcampPeopleRepository;
     private final UserContext userContext;
+    private final GetFullBootcampService getFullBootcampService;
 
     @Override
     public Mono<BootcampPeople> signUp(Long bootcampId) {
@@ -48,7 +50,8 @@ public class SignUpBootcampUseCase implements SignUpBootcampService {
                                                                 .email(normalizedEmail)
                                                                 .name(user.getName())
                                                                 .build();
-                                                        return bootcampPeopleRepository.save(people);
+                                                        return bootcampPeopleRepository.save(people)
+                                                        .doOnSuccess(saved -> getFullBootcampService.publishReport(bootcampId).subscribe());
                                                     });
                                         });
                             });
