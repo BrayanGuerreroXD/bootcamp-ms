@@ -1,9 +1,9 @@
 package co.com.bootcamp.entryPoints.kafka.consumer.mapper;
 
 import co.com.bootcamp.entryPoints.kafka.consumer.dto.AuthLogoutEventDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 @Component
 @RequiredArgsConstructor
