@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import reactor.core.publisher.Mono;
 import tools.jackson.databind.ObjectMapper;
 
@@ -63,7 +64,8 @@ class AuthLoginConsumerTest {
         when(mapper.toModel(any(AuthLoginEventDto.class))).thenReturn(savedAuth);
         when(saveAuthService.save(any())).thenReturn(Mono.just(savedAuth));
 
-        consumer.consume(message);
+        ConsumerRecord<String, String> record = new ConsumerRecord<>("topic", 0, 0, "key", message);
+        consumer.consume(record);
 
         verify(saveAuthService).save(any());
     }
