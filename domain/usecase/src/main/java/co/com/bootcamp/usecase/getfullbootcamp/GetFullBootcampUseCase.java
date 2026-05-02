@@ -6,6 +6,7 @@ import co.com.bootcamp.model.capacitycatalog.CapacityCatalog;
 import co.com.bootcamp.model.event.*;
 import co.com.bootcamp.model.event.gateways.EventGateway;
 import co.com.bootcamp.model.technologycapacitycatalog.TechnologyCapacityCatalog;
+import co.com.bootcamp.usecase.gettechnologycapacitycatalog.GetTechnologyCapacityCatalogService;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,6 +18,7 @@ public class GetFullBootcampUseCase implements GetFullBootcampService {
     private final BootcampRepository bootcampRepository;
     private final BootcampCapacityRepository bootcampCapacityRepository;
     private final BootcampPeopleRepository bootcampPeopleRepository;
+    private final GetTechnologyCapacityCatalogService getTechnologyCapacityCatalogService;
     private final EventGateway eventGateway;
 
     @Override
@@ -29,14 +31,20 @@ public class GetFullBootcampUseCase implements GetFullBootcampService {
         return bootcampRepository.findById(bootcampId)
                 .flatMap(bootcamp -> bootcampCapacityRepository.findByBootcampId(bootcampId)
                         .collectList()
-                        .flatMap(capacities -> bootcampPeopleRepository.findByBootcampId(bootcampId)
-                                .collectList()
-                                .map(people -> buildEvent(bootcamp, capacities, people))))
+                        .flatMap(bootcampCapacities -> {
+                            Flux<CapacityCatalog> capacitiesFlux = Flux.fromIterable(bootcampCapacities)
+                                    .map(BootcampCapacity::getCapacity)
+                                    .flatMap(capacity -> getTechnologyCapacityCatalogService.getAllByCapacityId(capacity.getId()));
+                            return capacitiesFlux.collectList()
+                                    .flatMap(capacities -> bootcampPeopleRepository.findByBootcampId(bootcampId)
+                                            .collectList()
+                                            .map(people -> buildEvent(bootcamp, capacities, people)));
+                        }))
                 .flatMap(eventGateway::publishBootcampReportSync);
     }
 
-    private BootcampEvent buildEvent(Bootcamp bootcamp, 
-                                     List<BootcampCapacity> capacities, 
+    private BootcampEvent buildEvent(Bootcamp bootcamp,
+                                     List<CapacityCatalog> capacities,
                                      List<BootcampPeople> people) {
         return BootcampEvent.builder()
                 .externalId(bootcamp.getId())
@@ -45,10 +53,10 @@ public class GetFullBootcampUseCase implements GetFullBootcampService {
                 .initTime(bootcamp.getInitTime())
                 .duration(bootcamp.getDuration())
                 .capacities(capacities.stream()
-                        .map(bc -> CapacityEvent.builder()
-                                .name(bc.getCapacity().getName())
-                                .technologies(bc.getCapacity().getTechnologies() != null 
-                                        ? bc.getCapacity().getTechnologies().stream()
+                        .map(cap -> CapacityEvent.builder()
+                                .name(cap.getName())
+                                .technologies(cap.getTechnologies() != null
+                                        ? cap.getTechnologies().stream()
                                                 .map(t -> TechnologyEvent.builder()
                                                         .name(t.getName())
                                                         .build())

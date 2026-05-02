@@ -6,6 +6,7 @@ import co.com.bootcamp.model.capacitycatalog.CapacityCatalog;
 import co.com.bootcamp.model.event.BootcampEvent;
 import co.com.bootcamp.model.event.gateways.EventGateway;
 import co.com.bootcamp.model.technologycapacitycatalog.TechnologyCapacityCatalog;
+import co.com.bootcamp.usecase.gettechnologycapacitycatalog.GetTechnologyCapacityCatalogService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,6 +34,8 @@ class GetFullBootcampUseCaseTest {
     @Mock
     private BootcampPeopleRepository bootcampPeopleRepository;
     @Mock
+    private GetTechnologyCapacityCatalogService getTechnologyCapacityCatalogService;
+    @Mock
     private EventGateway eventGateway;
 
     @InjectMocks
@@ -40,6 +44,7 @@ class GetFullBootcampUseCaseTest {
     @Test
     void shouldPublishReportWithAllData() {
         Long bootcampId = 1L;
+        Long capacityId = 10L;
         Bootcamp bootcamp = Bootcamp.builder()
                 .id(bootcampId)
                 .name("Java Bootcamp")
@@ -47,11 +52,13 @@ class GetFullBootcampUseCaseTest {
                 .initTime(LocalDateTime.now())
                 .duration(40)
                 .build();
-        
+
         TechnologyCapacityCatalog tech = TechnologyCapacityCatalog.builder()
+                .id(100L)
                 .name("Java")
                 .build();
         CapacityCatalog capacity = CapacityCatalog.builder()
+                .id(capacityId)
                 .name("Backend")
                 .technologies(List.of(tech))
                 .build();
@@ -59,9 +66,9 @@ class GetFullBootcampUseCaseTest {
                 .bootcamp(bootcamp)
                 .capacity(capacity)
                 .build();
-        
+
         BootcampPeople person = BootcampPeople.builder()
-                .bootcamp(bootcamp)
+                .bootcampId(bootcampId)
                 .name("John")
                 .email("john@test.com")
                 .build();
@@ -69,6 +76,8 @@ class GetFullBootcampUseCaseTest {
         when(bootcampRepository.findById(bootcampId)).thenReturn(Mono.just(bootcamp));
         when(bootcampCapacityRepository.findByBootcampId(bootcampId))
                 .thenReturn(Flux.just(bootcampCapacity));
+        when(getTechnologyCapacityCatalogService.getAllByCapacityId(capacityId))
+                .thenReturn(Mono.just(capacity));
         when(bootcampPeopleRepository.findByBootcampId(bootcampId))
                 .thenReturn(Flux.just(person));
         when(eventGateway.publishBootcampReportSync(any(BootcampEvent.class)))
