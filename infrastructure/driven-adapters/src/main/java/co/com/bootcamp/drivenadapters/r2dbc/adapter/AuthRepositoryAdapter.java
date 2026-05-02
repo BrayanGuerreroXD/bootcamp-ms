@@ -23,7 +23,9 @@ public class AuthRepositoryAdapter implements AuthRepository {
         if (entity.getId() == null) {
             entity.setCreatedAt(LocalDateTime.now());
         }
-        return entityRepository.save(entity)
+        return entityRepository.findByEmail(entity.getEmail())
+                .flatMap(existing -> entityRepository.deleteById(existing.getId()))
+                .then(entityRepository.save(entity))
                 .map(mapper::toModel);
     }
 

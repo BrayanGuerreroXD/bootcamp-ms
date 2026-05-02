@@ -1,5 +1,7 @@
 package co.com.bootcamp.entryPoints.kafka.consumer;
 
+import co.com.bootcamp.entryPoints.kafka.consumer.dto.AuthLoginEventDto;
+import co.com.bootcamp.entryPoints.kafka.consumer.mapper.AuthLoginEventMapper;
 import co.com.bootcamp.model.auth.Auth;
 import co.com.bootcamp.usecase.saveauth.SaveAuthService;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -19,13 +23,16 @@ class AuthLoginConsumerTest {
     @Mock
     private SaveAuthService saveAuthService;
 
-    private AuthLoginConsumer.AuthLoginEventMapper mapper;
+    @Mock
+    private AuthLoginEventMapper mapper;
+
+    private ObjectMapper objectMapper;
     private AuthLoginConsumer consumer;
 
     @BeforeEach
     void setUp() {
-        mapper = new AuthLoginConsumer.AuthLoginEventMapper();
-        consumer = new AuthLoginConsumer(saveAuthService, mapper);
+        objectMapper = new ObjectMapper();
+        consumer = new AuthLoginConsumer(saveAuthService, mapper, objectMapper);
     }
 
     @Test
@@ -39,6 +46,13 @@ class AuthLoginConsumerTest {
             }
             """;
 
+        AuthLoginEventDto dto = AuthLoginEventDto.builder()
+                .email("test@example.com")
+                .token("token123")
+                .isAdmin(true)
+                .expiresIn(3600)
+                .build();
+
         Auth savedAuth = Auth.builder()
                 .id(1L)
                 .email("test@example.com")
@@ -47,9 +61,11 @@ class AuthLoginConsumerTest {
                 .expiresIn(3600)
                 .build();
 
+        when(mapper.toModel(any(AuthLoginEventDto.class))).thenReturn(savedAuth);
         when(saveAuthService.save(any())).thenReturn(Mono.just(savedAuth));
 
-        consumer.consume(message);
+        ConsumerRecord<String, String> record = new ConsumerRecord<>("topic", 0, 0, "key", message);
+        consumer.consume(record);
 
         verify(saveAuthService).save(any());
     }

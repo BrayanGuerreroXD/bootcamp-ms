@@ -9,8 +9,5 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface TechnologyCapacityCatalogEntityMapper {
     TechnologyCapacityCatalog toModel(TechnologyCapacityCatalogEntity entity);
-
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
     TechnologyCapacityCatalogEntity toEntity(TechnologyCapacityCatalog model);
 }

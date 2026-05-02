@@ -10,4 +10,5 @@ public interface BootcampPeopleEntityRepository extends ReactiveCrudRepository<B
     Mono<Long> countByEmail(String email);
     Mono<Boolean> existsByBootcampIdAndEmail(Long bootcampId, String email);
     Mono<Void> deleteByBootcampId(Long bootcampId);
+    Flux<BootcampPeopleEntity> findByBootcampId(Long bootcampId);
 }

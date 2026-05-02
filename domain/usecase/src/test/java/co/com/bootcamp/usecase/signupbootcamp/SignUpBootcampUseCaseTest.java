@@ -10,6 +10,7 @@ import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.exception.NotFoundException;
 import co.com.bootcamp.model.auth.LoggedUser;
 import co.com.bootcamp.model.security.UserContext;
+import co.com.bootcamp.usecase.getfullbootcamp.GetFullBootcampService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,11 +35,14 @@ class SignUpBootcampUseCaseTest {
     @Mock
     private UserContext userContext;
 
+    @Mock
+    private GetFullBootcampService getFullBootcampService;
+
     private SignUpBootcampUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new SignUpBootcampUseCase(bootcampRepository, bootcampPeopleRepository, userContext);
+        useCase = new SignUpBootcampUseCase(bootcampRepository, bootcampPeopleRepository, userContext, getFullBootcampService);
     }
 
     @Test
@@ -52,6 +56,7 @@ class SignUpBootcampUseCaseTest {
         when(bootcampPeopleRepository.existsByBootcampIdAndEmail(1L, "user@test.com")).thenReturn(Mono.just(false));
         when(bootcampRepository.findById(1L)).thenReturn(Mono.just(bootcamp));
         when(bootcampPeopleRepository.save(any(BootcampPeople.class))).thenReturn(Mono.just(saved));
+        when(getFullBootcampService.publishReport(any())).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.signUp(1L))
                 .expectNextMatches(result -> result.getEmail().equals("user@test.com") && result.getName().equals("Test User"))

@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,13 +19,11 @@ class AuthLogoutConsumerTest {
     @Mock
     private DeleteAuthService deleteAuthService;
 
-    private AuthLogoutConsumer.AuthLogoutEventMapper mapper;
     private AuthLogoutConsumer consumer;
 
     @BeforeEach
     void setUp() {
-        mapper = new AuthLogoutConsumer.AuthLogoutEventMapper();
-        consumer = new AuthLogoutConsumer(deleteAuthService, mapper);
+        consumer = new AuthLogoutConsumer(deleteAuthService, new ObjectMapper());
     }
 
     @Test
@@ -38,7 +38,8 @@ class AuthLogoutConsumerTest {
         when(deleteAuthService.deleteByEmailAndToken("test@example.com", "token123"))
                 .thenReturn(Mono.empty());
 
-        consumer.consume(message);
+        ConsumerRecord<String, String> record = new ConsumerRecord<>("topic", 0, 0, "key", message);
+        consumer.consume(record);
 
         verify(deleteAuthService).deleteByEmailAndToken("test@example.com", "token123");
     }

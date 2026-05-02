@@ -2,12 +2,17 @@ package co.com.bootcamp.usecase.createbootcamp;
 
 import co.com.bootcamp.model.bootcamp.Bootcamp;
 import co.com.bootcamp.model.bootcamp.BootcampCapacity;
+import co.com.bootcamp.model.capacitycatalog.CapacityCatalog;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampCapacityRepository;
 import co.com.bootcamp.model.bootcamp.gateways.BootcampRepository;
+import co.com.bootcamp.model.event.CapacityBootcampSyncEvent;
+import co.com.bootcamp.model.event.gateways.EventGateway;
 import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.exception.GlobalExceptionEnum;
 import co.com.bootcamp.model.security.UserContext;
+import co.com.bootcamp.usecase.getfullbootcamp.GetFullBootcampService;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -16,7 +21,9 @@ import java.util.List;
 public class CreateBootcampUseCase implements CreateBootcampService {
     private final BootcampRepository bootcampRepository;
     private final BootcampCapacityRepository bootcampCapacityRepository;
+    private final EventGateway eventGateway;
     private final UserContext userContext;
+    private final GetFullBootcampService getFullBootcampService;
 
     @Override
     public Mono<Bootcamp> create(Bootcamp bootcamp) {
@@ -28,13 +35,25 @@ public class CreateBootcampUseCase implements CreateBootcampService {
                     return bootcampRepository.save(bootcamp)
                             .flatMap(saved -> {
                                 if (bootcamp.getCapacities() != null && !bootcamp.getCapacities().isEmpty()) {
-                                    return reactor.core.publisher.Flux.fromIterable(bootcamp.getCapacities())
+                                    return Flux.fromIterable(bootcamp.getCapacities())
                                             .map(cap -> BootcampCapacity.builder()
                                                     .bootcamp(saved)
                                                     .capacity(cap)
                                                     .build())
                                             .transform(bootcampCapacityRepository::saveAll)
-                                            .then(Mono.just(saved));
+                                            .then(Mono.fromCallable(() -> {
+                                                List<Long> capacityIds = bootcamp.getCapacities().stream()
+                                                        .map(CapacityCatalog::getId)
+                                                        .toList();
+                                                CapacityBootcampSyncEvent event = CapacityBootcampSyncEvent.builder()
+                                                        .bootcampId(saved.getId())
+                                                        .capacityIds(capacityIds)
+                                                        .build();
+                                                eventGateway.publishCapacitiesBootcampsMatch(event)
+                                                        .subscribe();
+                                                getFullBootcampService.publishReport(saved.getId()).subscribe();
+                                                return saved;
+                                            }));
                                 }
                                 return Mono.just(saved);
                             });

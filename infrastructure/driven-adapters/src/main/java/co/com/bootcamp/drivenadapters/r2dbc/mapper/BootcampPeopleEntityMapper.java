@@ -14,7 +14,5 @@ public interface BootcampPeopleEntityMapper {
     BootcampPeople toModel(BootcampPeopleEntity entity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "bootcampId", ignore = true)
     BootcampPeopleEntity toEntity(BootcampPeople model);
 }
