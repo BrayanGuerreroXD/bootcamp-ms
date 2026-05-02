@@ -2,6 +2,7 @@ package co.com.bootcamp.usecase.getcapacitycatalog;
 
 import co.com.bootcamp.model.capacitycatalog.CapacityCatalog;
 import co.com.bootcamp.model.capacitycatalog.gateways.CapacityCatalogRepository;
+import co.com.bootcamp.usecase.gettechnologycapacitycatalog.GetTechnologyCapacityCatalogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,11 +21,14 @@ class GetCapacityCatalogUseCaseTest {
     @Mock
     private CapacityCatalogRepository capacityCatalogRepository;
 
+    @Mock
+    private GetTechnologyCapacityCatalogService getTechnologyCapacityCatalogService;
+
     private GetCapacityCatalogUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new GetCapacityCatalogUseCase(capacityCatalogRepository);
+        useCase = new GetCapacityCatalogUseCase(capacityCatalogRepository, getTechnologyCapacityCatalogService);
     }
 
     @Test
