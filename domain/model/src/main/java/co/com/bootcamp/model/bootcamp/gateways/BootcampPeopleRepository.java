@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono;
 public interface BootcampPeopleRepository {
     Mono<BootcampPeople> save(BootcampPeople bootcampPeople);
     Flux<BootcampPeople> findByEmail(String email);
+    Flux<BootcampPeople> findByBootcampId(Long bootcampId);
     Mono<Long> countByEmail(String email);
     Mono<Boolean> existsByBootcampIdAndEmail(Long bootcampId, String email);
     Mono<Void> deleteByBootcampId(Long bootcampId);
