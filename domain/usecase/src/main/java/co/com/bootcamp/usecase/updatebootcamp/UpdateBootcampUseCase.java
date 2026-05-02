@@ -11,6 +11,7 @@ import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.exception.GlobalExceptionEnum;
 import co.com.bootcamp.model.exception.NotFoundException;
 import co.com.bootcamp.model.security.UserContext;
+import co.com.bootcamp.usecase.getfullbootcamp.GetFullBootcampService;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
@@ -23,6 +24,7 @@ public class UpdateBootcampUseCase implements UpdateBootcampService {
     private final BootcampCapacityRepository bootcampCapacityRepository;
     private final EventGateway eventGateway;
     private final UserContext userContext;
+    private final GetFullBootcampService getFullBootcampService;
 
     @Override
     public Mono<Bootcamp> update(Long id, Bootcamp bootcamp) {
@@ -62,7 +64,10 @@ CapacityBootcampSyncEvent event = CapacityBootcampSyncEvent.builder()
                                                                 .subscribe();
                                                     }
                                                     return saved;
-                                                })));
+                                                })))
+                                                .then(Mono.fromRunnable(() ->
+                                                    getFullBootcampService.publishReport(saved.getId()).subscribe()
+                                                ));
                             });
                 });
     }
