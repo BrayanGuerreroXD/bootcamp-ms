@@ -8,12 +8,7 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface BootcampEntityMapper {
-
     @Mapping(target = "capacities", ignore = true)
     Bootcamp toModel(BootcampEntity entity);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
     BootcampEntity toEntity(Bootcamp model);
 }
