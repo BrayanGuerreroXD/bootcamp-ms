@@ -6,6 +6,7 @@ import co.com.bootcamp.model.auth.Auth;
 import co.com.bootcamp.usecase.saveauth.SaveAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
@@ -19,9 +20,9 @@ public class AuthLoginConsumer {
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "${kafka.topics.generic-auth-login}")
-    public void consume(String message) {
+    public void consume(ConsumerRecord<String, String> record) {
         try {
-            AuthLoginEventDto dto = objectMapper.readValue(message, AuthLoginEventDto.class);
+            AuthLoginEventDto dto = objectMapper.readValue(record.value(), AuthLoginEventDto.class);
             log.info("Processing auth login event for email: {}", dto.getEmail());
 
             Auth auth = mapper.toModel(dto);
