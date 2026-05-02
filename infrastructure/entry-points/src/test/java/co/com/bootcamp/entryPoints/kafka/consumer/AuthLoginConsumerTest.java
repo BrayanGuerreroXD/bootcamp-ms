@@ -1,7 +1,10 @@
 package co.com.bootcamp.entryPoints.kafka.consumer;
 
+import co.com.bootcamp.entryPoints.kafka.consumer.dto.AuthLoginEventDto;
+import co.com.bootcamp.entryPoints.kafka.consumer.mapper.AuthLoginEventMapper;
 import co.com.bootcamp.model.auth.Auth;
 import co.com.bootcamp.usecase.saveauth.SaveAuthService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,13 +22,16 @@ class AuthLoginConsumerTest {
     @Mock
     private SaveAuthService saveAuthService;
 
-    private AuthLoginConsumer.AuthLoginEventMapper mapper;
+    @Mock
+    private AuthLoginEventMapper mapper;
+
+    private ObjectMapper objectMapper;
     private AuthLoginConsumer consumer;
 
     @BeforeEach
     void setUp() {
-        mapper = new AuthLoginConsumer.AuthLoginEventMapper();
-        consumer = new AuthLoginConsumer(saveAuthService, mapper);
+        objectMapper = new ObjectMapper();
+        consumer = new AuthLoginConsumer(saveAuthService, mapper, objectMapper);
     }
 
     @Test
@@ -39,6 +45,13 @@ class AuthLoginConsumerTest {
             }
             """;
 
+        AuthLoginEventDto dto = AuthLoginEventDto.builder()
+                .email("test@example.com")
+                .token("token123")
+                .isAdmin(true)
+                .expiresIn(3600)
+                .build();
+
         Auth savedAuth = Auth.builder()
                 .id(1L)
                 .email("test@example.com")
@@ -47,6 +60,7 @@ class AuthLoginConsumerTest {
                 .expiresIn(3600)
                 .build();
 
+        when(mapper.toModel(any(AuthLoginEventDto.class))).thenReturn(savedAuth);
         when(saveAuthService.save(any())).thenReturn(Mono.just(savedAuth));
 
         consumer.consume(message);

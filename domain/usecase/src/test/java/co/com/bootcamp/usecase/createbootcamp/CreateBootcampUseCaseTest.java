@@ -59,7 +59,7 @@ class CreateBootcampUseCaseTest {
         when(userContext.currentUser()).thenReturn(Mono.just(adminUser));
         when(bootcampRepository.save(any(Bootcamp.class))).thenReturn(Mono.just(savedBootcamp));
         when(bootcampCapacityRepository.saveAll(any())).thenReturn(reactor.core.publisher.Flux.empty());
-        when(eventGateway.publishBootcampCapacityMatch(any())).thenReturn(Mono.empty());
+        when(eventGateway.publishCapacitiesBootcampsMatch(any())).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.create(bootcamp))
                 .expectNextMatches(result -> result.getId().equals(1L))

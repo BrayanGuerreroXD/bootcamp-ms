@@ -64,7 +64,7 @@ class UpdateBootcampUseCaseTest {
         when(bootcampRepository.save(any(Bootcamp.class))).thenReturn(Mono.just(updated));
         when(bootcampCapacityRepository.deleteByBootcampId(1L)).thenReturn(Mono.empty());
         when(bootcampCapacityRepository.saveAll(any())).thenReturn(Flux.empty());
-        when(eventGateway.publishBootcampCapacityMatch(any())).thenReturn(Mono.empty());
+        when(eventGateway.publishCapacitiesBootcampsMatch(any())).thenReturn(Mono.empty());
 
         StepVerifier.create(useCase.update(1L, updateData))
                 .expectNextMatches(result -> result.getName().equals("New Name"))
