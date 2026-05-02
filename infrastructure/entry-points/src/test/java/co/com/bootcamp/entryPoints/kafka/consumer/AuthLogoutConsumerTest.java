@@ -2,13 +2,13 @@ package co.com.bootcamp.entryPoints.kafka.consumer;
 
 import co.com.bootcamp.entryPoints.kafka.consumer.mapper.AuthLogoutEventMapper;
 import co.com.bootcamp.usecase.deleteauth.DeleteAuthService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

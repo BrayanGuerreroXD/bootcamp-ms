@@ -4,13 +4,13 @@ import co.com.bootcamp.entryPoints.kafka.consumer.dto.AuthLoginEventDto;
 import co.com.bootcamp.entryPoints.kafka.consumer.mapper.AuthLoginEventMapper;
 import co.com.bootcamp.model.auth.Auth;
 import co.com.bootcamp.usecase.saveauth.SaveAuthService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
