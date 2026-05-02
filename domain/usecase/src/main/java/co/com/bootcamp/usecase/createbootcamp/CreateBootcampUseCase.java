@@ -10,6 +10,7 @@ import co.com.bootcamp.model.event.gateways.EventGateway;
 import co.com.bootcamp.model.exception.ForbiddenException;
 import co.com.bootcamp.model.exception.GlobalExceptionEnum;
 import co.com.bootcamp.model.security.UserContext;
+import co.com.bootcamp.usecase.getfullbootcamp.GetFullBootcampService;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,6 +23,7 @@ public class CreateBootcampUseCase implements CreateBootcampService {
     private final BootcampCapacityRepository bootcampCapacityRepository;
     private final EventGateway eventGateway;
     private final UserContext userContext;
+    private final GetFullBootcampService getFullBootcampService;
 
     @Override
     public Mono<Bootcamp> create(Bootcamp bootcamp) {
@@ -49,6 +51,7 @@ public class CreateBootcampUseCase implements CreateBootcampService {
                                                         .build();
                                                 eventGateway.publishCapacitiesBootcampsMatch(event)
                                                         .subscribe();
+                                                getFullBootcampService.publishReport(saved.getId()).subscribe();
                                                 return saved;
                                             }));
                                 }
