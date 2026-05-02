@@ -46,4 +46,9 @@ public class BootcampPeopleRepositoryAdapter implements BootcampPeopleRepository
     public Mono<Void> deleteByBootcampId(Long bootcampId) {
         return entityRepository.deleteByBootcampId(bootcampId);
     }
+
+    @Override
+    public Flux<BootcampPeople> findByBootcampId(Long bootcampId) {
+        return entityRepository.findByBootcampId(bootcampId).map(mapper::toModel);
+    }
 }
